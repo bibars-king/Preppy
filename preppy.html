@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Preppy — Free AP Calculus AB practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #16264D;
+    --coral: #FF6B57;
+    --success: #16A34A;
+    --danger: #DC2626;
+    --bg: #ffffff;
+    --surface: #F6F7F9;
+    --border: #E4E7EC;
+    --content: #16264D;
+    --muted: #6B7280;
+  }
+  html.dark {
+    --bg: #0E1525;
+    --surface: #16203A;
+    --border: #26324F;
+    --content: #E8ECF4;
+    --muted: #94A2B2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--content);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background .3s, color .3s;
+  }
+  ::selection { background: rgba(255,107,87,.25); }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Nav */
+  header.nav {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 75%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner { height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 0; }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border-radius: 16px; padding: 10px 20px; font-size: 14px; font-weight: 600;
+    transition: transform .12s ease, background .2s, border-color .2s; border: 2px solid transparent;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--coral); color: #fff; }
+  .btn-primary:hover { background: #ff5740; }
+  .btn-secondary { background: var(--surface); color: var(--content); border-color: var(--border); }
+  .btn-secondary:hover { border-color: color-mix(in srgb, var(--content) 40%, transparent); }
+  .btn-lg { padding: 14px 28px; font-size: 16px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .theme-toggle {
+    width: 38px; height: 38px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--content); display: inline-flex;
+    align-items: center; justify-content: center;
+  }
+  .theme-toggle:hover { background: color-mix(in srgb, var(--border) 40%, transparent); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface);
+    padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--muted);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--coral); }
+  .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--coral); }
+
+  /* Hero */
+  .hero { position: relative; overflow: hidden; }
+  .glow { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .glow span { position: absolute; border-radius: 999px; filter: blur(70px); }
+  .glow .g1 { left: -90px; top: 0; width: 280px; height: 280px; background: rgba(255,107,87,.20); }
+  .glow .g2 { right: 0; top: 130px; width: 280px; height: 280px; background: rgba(22,38,77,.12); }
+  html.dark .glow .g2 { background: rgba(255,107,87,.10); }
+  .hero-grid { display: grid; gap: 48px; padding: 64px 0; align-items: center; }
+  @media (min-width: 920px) { .hero-grid { grid-template-columns: 1fr 1fr; padding: 90px 0; } }
+  h1 {
+    font-size: clamp(40px, 6vw, 62px); font-weight: 800; line-height: 1.04;
+    letter-spacing: -.02em; margin-top: 20px;
+  }
+  h1 .accent { color: var(--coral); }
+  .lead { margin-top: 20px; font-size: 18px; color: var(--muted); max-width: 440px; }
+  .hero-cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .fineprint { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+  /* reveal animation */
+  .reveal { opacity: 0; transform: translateY(24px); animation: fadeUp .6s ease forwards; }
+  .d1 { animation-delay: .05s; } .d2 { animation-delay: .15s; } .d3 { animation-delay: .25s; }
+  .d4 { animation-delay: .35s; } .d5 { animation-delay: .45s; }
+  @keyframes fadeUp { to { opacity: 1; transform: none; } }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  .preview { animation: floaty 6s ease-in-out infinite; padding: 24px; box-shadow: 0 24px 50px -20px rgba(22,38,77,.18); }
+  .preview .q { margin-top: 12px; font-size: 18px; font-weight: 600; }
+  .opts { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .opt {
+    border: 2px solid var(--border); border-radius: 12px; padding: 10px 12px;
+    font-size: 14px; font-weight: 500;
+  }
+  .opt.correct { border-color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); color: var(--success); }
+  .preview .feedback {
+    margin-top: 16px; border-radius: 12px; padding: 10px 12px; font-size: 14px; font-weight: 600;
+    background: color-mix(in srgb, var(--success) 12%, transparent); color: var(--success);
+  }
+
+  /* Features */
+  .section { padding: 80px 0; }
+  .section.muted { background: color-mix(in srgb, var(--surface) 60%, transparent); }
+  .section-head { max-width: 620px; margin: 0 auto; text-align: center; }
+  .section-head h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -.02em; margin-top: 8px; }
+  .feature-grid { margin-top: 48px; display: grid; gap: 20px; }
+  @media (min-width: 820px) { .feature-grid { grid-template-columns: repeat(3, 1fr); } }
+  .feature { padding: 26px; }
+  .feature .ico {
+    width: 48px; height: 48px; border-radius: 14px; background: var(--navy); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .feature h3 { margin-top: 20px; font-size: 18px; font-weight: 700; }
+  .feature p { margin-top: 8px; font-size: 14px; color: var(--muted); }
+
+  .cta-card { position: relative; overflow: hidden; background: var(--navy); color: #fff; border-radius: 24px; padding: 56px 24px; text-align: center; }
+  .cta-card .blob { position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 999px; background: rgba(255,107,87,.30); filter: blur(60px); }
+  .cta-card h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; position: relative; }
+  .cta-card p { margin-top: 12px; color: rgba(255,255,255,.7); position: relative; }
+
+  footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--muted); font-size: 14px; }
+
+  /* Quiz */
+  .quiz-wrap { max-width: 680px; margin: 0 auto; padding: 40px 0; }
+  .quiz-head { text-align: center; margin-bottom: 32px; }
+  .quiz-head h1 { font-size: 30px; margin-top: 4px; }
+  .quiz-head p { margin-top: 8px; color: var(--muted); }
+  .bar-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+  .bar { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--coral); border-radius: 999px; transition: width .4s ease; }
+  .qcard { padding: 28px; margin-top: 24px; }
+  .qcard h2 { font-size: 22px; font-weight: 700; }
+  .choices { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .choice {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    border: 2px solid var(--border); border-radius: 16px; padding: 14px 16px;
+    color: var(--content); font-size: 16px; font-weight: 500; transition: border-color .15s, background .15s, transform .1s;
+  }
+  .choice:not(:disabled):hover { border-color: color-mix(in srgb, var(--content) 40%, transparent); }
+  .choice:active { transform: scale(.99); }
+  .choice .key {
+    flex: 0 0 auto; width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--muted);
+  }
+  .choice.is-correct { border-color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); }
+  .choice.is-correct .key { background: var(--success); color: #fff; border-color: transparent; }
+  .choice.is-wrong { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+  .choice.is-wrong .key { background: var(--danger); color: #fff; border-color: transparent; }
+  .choice.dim { opacity: .55; }
+  .choice:disabled { cursor: default; }
+
+  .explain { margin-top: 20px; }
+  .verdict { border-radius: 16px; padding: 12px 16px; font-size: 14px; font-weight: 600; }
+  .verdict.ok { background: color-mix(in srgb, var(--success) 12%, transparent); color: var(--success); }
+  .verdict.no { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger); }
+  .explain p { margin-top: 12px; padding: 0 4px; color: var(--content); }
+  .actions { margin-top: 24px; display: flex; justify-content: flex-end; }
+  .backlink { margin-top: 24px; text-align: center; }
+  .backlink a { font-size: 14px; font-weight: 600; color: var(--muted); }
+  .backlink a:hover { color: var(--content); }
+
+  /* Results */
+  .results { max-width: 420px; margin: 0 auto; padding: 32px; text-align: center; animation: pop .4s cubic-bezier(.2,1.2,.3,1) forwards; }
+  @keyframes pop { from { opacity: 0; transform: scale(.92) translateY(20px); } to { opacity: 1; transform: none; } }
+  .trophy { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 999px; background: color-mix(in srgb, var(--coral) 12%, transparent); display: flex; align-items: center; justify-content: center; font-size: 30px; }
+  .results h2 { font-size: 26px; font-weight: 800; }
+  .results .sub { color: var(--muted); margin-top: 2px; }
+  .bigscore { font-size: 64px; font-weight: 800; color: var(--coral); margin: 28px 0 4px; }
+  .bigscore small { font-size: 30px; color: var(--muted); }
+  .results .pct { font-size: 14px; font-weight: 600; color: var(--muted); }
+  .results .btns { margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+
+  .hidden { display: none !important; }
+
+  /* Confetti */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 60; overflow: hidden; }
+  .confetti-piece { position: absolute; width: 9px; height: 9px; border-radius: 2px; will-change: transform, opacity; }
+</style>
+</head>
+<body>
+<div id="confetti"></div>
+
+<!-- ===================== LANDING VIEW ===================== -->
+<div id="view-home">
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="#" class="logo" data-nav="home" aria-label="Preppy"></a>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-btn" aria-label="Toggle dark mode"></button>
+        <button class="btn btn-primary" data-nav="quiz">Start practicing</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="glow"><span class="g1"></span><span class="g2"></span></div>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="pill reveal d1"><span class="dot"></span> AP Calculus AB · free practice</span>
+        <h1 class="reveal d2">Climb toward your <span class="accent">best score.</span></h1>
+        <p class="lead reveal d3">Preppy makes test prep feel effortless — sharp questions, instant feedback, and explanations that actually click. No sign-up required.</p>
+        <div class="hero-cta reveal d4">
+          <button class="btn btn-primary btn-lg" data-nav="quiz">Start practicing →</button>
+          <a class="btn btn-secondary btn-lg" href="#how">How it works</a>
+        </div>
+        <p class="fineprint reveal d5">8 questions · about 5 minutes · runs entirely in your browser</p>
+      </div>
+
+      <div class="reveal d3">
+        <div class="card preview">
+          <span class="eyebrow">AP Calculus AB · Question 2</span>
+          <p class="q">If f(x) = 3x² − 5x + 2, what is f′(2)?</p>
+          <div class="opts">
+            <div class="opt">A. 5</div>
+            <div class="opt correct">B. 7</div>
+            <div class="opt">C. 9</div>
+            <div class="opt">D. 12</div>
+          </div>
+          <div class="feedback">Correct! f′(x) = 6x − 5, so f′(2) = 7.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section muted" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>Practice that pushes you forward</h2>
+      </div>
+      <div class="feature-grid">
+        <div class="card feature"><div class="ico">▶</div><h3>Learn by doing</h3><p>Work through real AP-style problems one at a time, with instant feedback on every answer.</p></div>
+        <div class="card feature"><div class="ico">◎</div><h3>Understand every step</h3><p>A clear, worked explanation appears after each question — so a wrong answer becomes a lesson.</p></div>
+        <div class="card feature"><div class="ico">★</div><h3>Stay motivated</h3><p>Track your score as you go, celebrate correct answers, and finish with a quick performance recap.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cta-card">
+        <div class="blob"></div>
+        <h2>Ready to test yourself?</h2>
+        <p>Jump into 8 AP Calculus AB questions. See how you do — it takes about five minutes.</p>
+        <button class="btn btn-lg" style="margin-top:32px;background:var(--coral);color:#fff;position:relative" data-nav="quiz">Start practicing</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Preppy — free AP Calculus AB practice.</footer>
+</div>
+
+<!-- ===================== QUIZ VIEW ===================== -->
+<div id="view-quiz" class="hidden">
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="#" class="logo" data-nav="home" aria-label="Preppy"></a>
+      <button class="theme-toggle" id="theme-btn-2" aria-label="Toggle dark mode"></button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="quiz-wrap">
+      <div class="quiz-head">
+        <p class="eyebrow">AP Calculus AB</p>
+        <h1>Practice set</h1>
+        <p>Pick an answer to see instant feedback and an explanation.</p>
+      </div>
+      <div id="quiz-body"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Logo (inline SVG, injected into both navs) ---------- */
+const LOGO_SVG = `
+<svg viewBox="0 0 220 64" width="103" height="30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preppy">
+  <rect x="0" y="0" width="64" height="64" rx="16" fill="#16264D"/>
+  <path d="M15 36 L32 16 L49 36" fill="none" stroke="#FF6B57" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15 50 L32 30 L49 50" fill="none" stroke="#FF6B57" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+  <text x="80" y="44" fill="currentColor" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="34" font-weight="700">Preppy</text>
+</svg>`;
+document.querySelectorAll('.logo').forEach(el => el.innerHTML = LOGO_SVG);
+
+/* ---------- Theme toggle ---------- */
+const SUN = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></svg>`;
+const MOON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>`;
+function applyTheme(t) {
+  document.documentElement.classList.toggle('dark', t === 'dark');
+  const icon = t === 'dark' ? SUN : MOON;
+  document.querySelectorAll('.theme-toggle').forEach(b => b.innerHTML = icon);
+  try { localStorage.setItem('preppy-theme', t); } catch (e) {}
+}
+(function initTheme() {
+  let t = 'light';
+  try {
+    const s = localStorage.getItem('preppy-theme');
+    t = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (e) {}
+  applyTheme(t);
+})();
+document.querySelectorAll('.theme-toggle').forEach(b =>
+  b.addEventListener('click', () =>
+    applyTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark')
+  )
+);
+
+/* ---------- View routing ---------- */
+function show(view) {
+  document.getElementById('view-home').classList.toggle('hidden', view !== 'home');
+  document.getElementById('view-quiz').classList.toggle('hidden', view !== 'quiz');
+  window.scrollTo(0, 0);
+  if (view === 'quiz') startQuiz();
+}
+document.addEventListener('click', e => {
+  const nav = e.target.closest('[data-nav]');
+  if (nav) { e.preventDefault(); show(nav.getAttribute('data-nav')); }
+});
+
+/* ---------- Questions ---------- */
+const QUESTIONS = [
+  { prompt: "If f(x) = x⁴, what is f′(x)?", choices: ["4x³","x³","4x⁴","⅕x⁵"], answer: 0,
+    explanation: "Power rule: d/dx xⁿ = n·xⁿ⁻¹, so f′(x) = 4x³." },
+  { prompt: "If f(x) = 3x² − 5x + 2, what is f′(2)?", choices: ["5","7","9","12"], answer: 1,
+    explanation: "f′(x) = 6x − 5, so f′(2) = 6(2) − 5 = 12 − 5 = 7." },
+  { prompt: "Evaluate the limit:  lim (x→2) (x² − 4) / (x − 2).", choices: ["0","2","4","Does not exist"], answer: 2,
+    explanation: "Factor: (x − 2)(x + 2)/(x − 2) = x + 2 for x ≠ 2. As x → 2 this approaches 4." },
+  { prompt: "Using the chain rule, the derivative of f(x) = (2x + 1)³ is:", choices: ["3(2x + 1)²","6(2x + 1)²","2(2x + 1)³","6(2x + 1)³"], answer: 1,
+    explanation: "Chain rule: 3(2x + 1)² · d/dx(2x + 1) = 3(2x + 1)² · 2 = 6(2x + 1)²." },
+  { prompt: "Evaluate at infinity:  lim (x→∞) (3x² + 5) / (6x² − x).", choices: ["0","½","3","∞"], answer: 1,
+    explanation: "Same degree top and bottom → ratio of leading coefficients: 3/6 = ½." },
+  { prompt: "What is the derivative of the constant function f(x) = 7?", choices: ["7","1","0","7x"], answer: 2,
+    explanation: "A constant never changes, so its derivative is 0." },
+  { prompt: "At what x-value does f(x) = x² − 6x + 8 have a horizontal tangent line?", choices: ["x = 2","x = 3","x = 4","x = 6"], answer: 1,
+    explanation: "Horizontal tangent where f′(x) = 0. f′(x) = 2x − 6 = 0, so x = 3." },
+  { prompt: "Evaluate the limit:  lim (x→0) sin(5x) / x.", choices: ["0","1","5","Does not exist"], answer: 2,
+    explanation: "Using lim (u→0) sin(u)/u = 1: sin(5x)/x = 5 · sin(5x)/(5x) → 5." },
+];
+
+/* ---------- Quiz logic ---------- */
+let qi = 0, score = 0, revealed = false;
+
+function startQuiz() { qi = 0; score = 0; revealed = false; renderQuestion(); }
+
+function renderQuestion() {
+  const q = QUESTIONS[qi];
+  const isLast = qi === QUESTIONS.length - 1;
+  const body = document.getElementById('quiz-body');
+  body.innerHTML = `
+    <div class="bar-row"><span>Question ${qi + 1} of ${QUESTIONS.length}</span><span>Score: ${score}</span></div>
+    <div class="bar"><i style="width:${(qi / QUESTIONS.length) * 100}%"></i></div>
+    <div class="card qcard reveal d1">
+      <h2>${q.prompt}</h2>
+      <div class="choices" id="choices">
+        ${q.choices.map((c, i) => `
+          <button class="choice" data-i="${i}">
+            <span class="key">${String.fromCharCode(65 + i)}</span>
+            <span>${c}</span>
+          </button>`).join('')}
+      </div>
+      <div id="explain"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="next-btn" disabled>${isLast ? 'See results' : 'Next question'}</button>
+    </div>
+    <div class="backlink"><a href="#" data-nav="home">← Back to home</a></div>
+  `;
+  revealed = false;
+  document.querySelectorAll('#choices .choice').forEach(btn =>
+    btn.addEventListener('click', () => choose(parseInt(btn.dataset.i, 10)))
+  );
+  document.getElementById('next-btn').addEventListener('click', next);
+}
+
+function choose(i) {
+  if (revealed) return;
+  revealed = true;
+  const q = QUESTIONS[qi];
+  const correct = i === q.answer;
+  if (correct) { score++; fireConfetti(); }
+
+  document.querySelectorAll('#choices .choice').forEach(btn => {
+    const idx = parseInt(btn.dataset.i, 10);
+    btn.disabled = true;
+    if (idx === q.answer) btn.classList.add('is-correct');
+    else if (idx === i) btn.classList.add('is-wrong');
+    else btn.classList.add('dim');
+  });
+
+  document.getElementById('explain').innerHTML = `
+    <div class="explain">
+      <div class="verdict ${correct ? 'ok' : 'no'}">${correct ? "Correct! Nice work. 🎉" : "Not quite — here's why:"}</div>
+      <p>${q.explanation}</p>
+    </div>`;
+
+  const nb = document.getElementById('next-btn');
+  nb.disabled = false;
+  document.querySelector('.bar > i').style.width = ((qi + 1) / QUESTIONS.length) * 100 + '%';
+}
+
+function next() {
+  if (qi === QUESTIONS.length - 1) { renderResults(); return; }
+  qi++;
+  renderQuestion();
+}
+
+function renderResults() {
+  const total = QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
+  const msg = pct >= 88 ? 'Outstanding!' : pct >= 62 ? 'Solid work!' : pct >= 38 ? 'Keep going!' : 'Good start!';
+  const body = document.getElementById('quiz-body');
+  body.innerHTML = `
+    <div class="card results">
+      <div class="trophy">🏆</div>
+      <h2>${msg}</h2>
+      <p class="sub">AP Calculus AB · practice complete</p>
+      <div class="bigscore"><span id="count">0</span><small>/${total}</small></div>
+      <p class="pct">${pct}% correct</p>
+      <div class="btns">
+        <button class="btn btn-primary" id="again">Try again</button>
+        <button class="btn btn-secondary" data-nav="home">Back to home</button>
+      </div>
+    </div>`;
+  document.getElementById('again').addEventListener('click', startQuiz);
+  // Count-up animation
+  const el = document.getElementById('count');
+  let cur = 0;
+  const step = () => { cur++; el.textContent = cur; if (cur < score) setTimeout(step, 120); };
+  if (score > 0) setTimeout(step, 200); else el.textContent = '0';
+}
+
+/* ---------- Confetti ---------- */
+const COLORS = ['#FF6B57', '#16A34A', '#F59E0B', '#16264D', '#FF9E57'];
+function fireConfetti() {
+  const root = document.getElementById('confetti');
+  const cx = innerWidth / 2, cy = innerHeight / 2.4;
+  for (let n = 0; n < 30; n++) {
+    const p = document.createElement('span');
+    p.className = 'confetti-piece';
+    p.style.background = COLORS[n % COLORS.length];
+    p.style.left = cx + 'px';
+    p.style.top = cy + 'px';
+    root.appendChild(p);
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 120 + Math.random() * 220;
+    const dx = Math.cos(ang) * dist;
+    const dy = Math.sin(ang) * dist - 120;
+    p.animate(
+      [
+        { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx}px, ${dy}px) rotate(${Math.random() * 720 - 360}deg)`, opacity: 0 }
+      ],
+      { duration: 900 + Math.random() * 300, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'forwards' }
+    );
+    setTimeout(() => p.remove(), 1300);
+  }
+}
+</script>
+</body>
+</html>
