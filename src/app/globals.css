@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light surfaces */
+  --bg: 255 255 255;
+  --surface: 246 247 249;
+  --border: 228 231 240;
+  --content: 22 38 77;
+  --muted: 107 114 128;
+}
+
+.dark {
+  /* Dark surfaces */
+  --bg: 14 21 37;
+  --surface: 22 32 58;
+  --border: 38 50 79;
+  --content: 232 236 244;
+  --muted: 148 158 178;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-content antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  ::selection {
+    background-color: rgb(255 107 87 / 0.25);
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-border bg-surface;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-2.5
+      text-sm font-semibold transition-colors focus:outline-none
+      focus-visible:ring-2 focus-visible:ring-coral focus-visible:ring-offset-2
+      focus-visible:ring-offset-background disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-coral text-white hover:bg-[#ff5740];
+  }
+  .btn-secondary {
+    @apply btn border border-border bg-surface text-content hover:bg-border/40;
+  }
+  .btn-navy {
+    @apply btn bg-navy text-white hover:bg-[#1d3266];
+  }
+  .input {
+    @apply w-full rounded-2xl border border-border bg-background px-4 py-2.5
+      text-content placeholder:text-muted focus:border-coral focus:outline-none
+      focus:ring-2 focus:ring-coral/30;
+  }
+}
+
+/* Confetti burst pieces */
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  will-change: transform, opacity;
+}
+
+/* Respect reduced motion globally for decorative animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
