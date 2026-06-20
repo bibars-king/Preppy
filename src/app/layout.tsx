@@ -11,11 +11,11 @@ const sans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Preppy — Prep for the Digital PSAT & AP exams",
+    default: "Preppy — Free AP Calculus AB practice",
     template: "%s · Preppy",
   },
   description:
-    "Preppy helps students master the Digital PSAT and AP exams with focused lessons, realistic timed mock tests, instant feedback, and momentum that keeps you coming back.",
+    "Preppy is a free, no-sign-up test-prep app. Work through AP Calculus AB questions one at a time with instant feedback and clear explanations.",
   icons: {
     icon: "/favicon.svg",
   },
